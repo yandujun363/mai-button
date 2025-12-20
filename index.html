@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>埋按钮 (:3っ)∋</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="favicon.jpg" type="image/jpeg">
+</head>
+<body>
+    <!-- 加载界面 -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在加载音频资源...</div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="loadingProgress"></div>
+                </div>
+                <div class="progress-text" id="loadingProgressText">0/0</div>
+            </div>
+            <div class="loading-note">首次加载可能需要时间，音频会缓存在您的浏览器中</div>
+        </div>
+    </div>
+
+    <!-- 主界面 -->
+    <div id="mainContent" class="main-content" style="display: none;">
+        <header>
+            <h1>埋按钮 (:3っ)∋</h1>
+        </header>
+
+        <div class="controls">
+            <button id="randomPlay">随机播放</button>
+            <button id="stopAll">停止所有</button>
+            <label>
+                <input type="checkbox" id="loopMode"> 洗脑循环
+            </label>
+        </div>
+
+        <main id="voiceContainer">
+            <!-- 音频按钮会通过JS动态生成 -->
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <p class="footer-text">
+                        基于 <a href="https://github.com/CaoMeiYouRen/shirakami-haruka-button" target="_blank"
+                            rel="noopener noreferrer">CaoMeiYouRen/shirakami-haruka-button</a> 制作
+                        <span class="footer-note">（参考代码让AI重新写的纯原生版本，原项目炸了，用不了）</span>
+                    </p>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-title">使用指南</h3>
+                    <ul class="guide-list">
+                        <li>点击按钮即可播放对应音声</li>
+                        <li>多次点击可以造成相当鬼畜的效果</li>
+                        <li>开启洗脑循环将会一直播放一个音频</li>
+                        <li>同时开启循环播放和洗脑循环将会出现 <strong>地 狱 绘 卷</strong></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-title">相关链接</h3>
+                    <a href="https://space.bilibili.com/3546775765912341" target="_blank" rel="noopener noreferrer"
+                        class="footer-link">
+                        主播空间
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="copyright">© 2025 埋按钮 (:3っ)∋ - 仅供娱乐使用</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 修改为模块化加载 -->
+    <script type="module" src="app.js"></script>
+    <script defer src="https://js.yangdujun.top/version.js" data-website-id="02d69265-97af-44ea-9e73-9607ee9076bc"></script>
+</body>
+</html>
