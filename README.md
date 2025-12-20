@@ -3,39 +3,38 @@
 基于[CaoMeiYouRen/shirakami-haruka-button](https://github.com/CaoMeiYouRen/shirakami-haruka-button)修改[^1]  
 
 **在线体验**：[埋按钮 (:3っ)∋](https://maibutton.yangdujun.top)  
-**GitHub Pages**：[https://your-username.github.io/mai-button/](https://your-username.github.io/mai-button/)
+**GitHub Pages**：[https://yandujun363.github.io/mai-button/](https://yandujun363.github.io/mai-button/)
 
 感谢[春虎Harutora](https://space.bilibili.com/7813737)提供的主播音频文件  
 代码部分使用MIT协议开源
 
 ---
 
-## 🎯 项目简介
+## 项目简介
 
-一个纯粹的音频播放按钮网站，收录了多位VTuber/主播的经典音频片段。采用原生JavaScript开发，支持音频缓存、循环播放、随机播放等功能，旨在为用户提供流畅、有趣的音频播放体验。
-
----
-
-## ✨ 核心特性
-
-- **🎵 音频缓存系统**：使用IndexedDB缓存音频文件，提升二次加载速度
-- **🚀 预加载机制**：启动时预加载所有音频，减少播放延迟
-- **🔄 叠加播放**：支持同时播放多个音频，创造鬼畜效果
-- **🔁 循环模式**：开启"洗脑循环"模式，让音频无限循环播放
-- **📱 响应式设计**：适配各种屏幕尺寸
-- **💾 离线支持**：支持Service Worker，可在无网络环境下使用
-- **🌐 多语言支持**：预留多语言接口，便于国际化扩展
+一个纯粹的音频播放按钮网站，收录了[坷埋埋](https://space.bilibili.com/3546775765912341)的经典音频片段。采用原生JavaScript开发，支持音频缓存、循环播放、随机播放等功能，旨在为用户提供流畅、有趣的音频播放体验。
 
 ---
 
-## 📁 项目结构
+## 核心特性
+
+- **音频缓存系统**：使用IndexedDB缓存音频文件，提升二次加载速度
+- **预加载机制**：启动时预加载所有音频，减少播放延迟
+- **叠加播放**：支持同时播放多个音频，创造鬼畜效果
+- **循环模式**：开启"洗脑循环"模式，让音频无限循环播放
+- **响应式设计**：适配各种屏幕尺寸
+- **离线支持**：支持Service Worker，可在无网络环境下使用
+- **多语言支持**：预留多语言接口，便于国际化扩展
+
+---
+
+## 项目结构
 
 ```
 mai-button/
 ├── index.html                    # 主页面
 ├── styles.css                    # 样式文件
 ├── app.js                        # 主应用程序（ES模块）
-├── service-worker.js             # 服务工作者（PWA支持）
 ├── README.md                     # 说明文档
 ├── public/                       # 公共资源
 │   └── voices/                   # 音频文件目录
@@ -51,64 +50,7 @@ mai-button/
 
 ---
 
-## 🚀 快速部署
-
-### GitHub Pages部署
-
-1. **Fork本仓库**到你的GitHub账户
-2. **启用GitHub Pages**：
-   - 进入仓库设置 → Pages
-   - 选择分支（通常是`main`或`master`）
-   - 选择根目录`/root`
-   - 点击保存
-
-3. **访问你的页面**：
-   ```
-   https://你的用户名.github.io/mai-button/
-   ```
-
-### 自定义域名部署
-
-1. **在仓库设置中添加自定义域名**：
-   - 进入仓库设置 → Pages → Custom domain
-   - 输入你的域名（如：maibutton.yangdujun.top）
-
-2. **在域名服务商处配置CNAME记录**：
-   ```
-   @   A       185.199.108.153
-   @   A       185.199.109.153
-   @   A       185.199.110.153
-   @   A       185.199.111.153
-   
-   www CNAME   你的用户名.github.io
-   ```
-
-3. **等待DNS生效**（通常需要几分钟到几小时）
-
----
-
-## 🛠️ 本地开发
-
-```bash
-# 克隆项目
-git clone https://github.com/你的用户名/mai-button.git
-cd mai-button
-
-# 本地运行（需要本地服务器）
-# 可以使用Python或Node.js启动本地服务器
-
-# Python 3
-python -m http.server 8000
-
-# Node.js (如果有http-server)
-npx http-server
-
-# 访问 http://localhost:8000
-```
-
----
-
-## 📱 使用指南
+## 使用指南
 
 - **点击按钮**即可播放对应音声
 - **多次点击**可以造成相当鬼畜的效果
@@ -185,11 +127,11 @@ A: 是的，完全响应式设计，支持移动端访问。
 ### Q: 音频可以下载吗？
 A: 音频版权归原主播所有，请勿用于商业用途。
 
----
+
 
 [^1]:原项目不知道为啥Build之后白屏，但是Dev没问题，可能是太老古董了吧，然后就塞AI让AI写了个效果差不多的，虽然还是有点小问题。
 
----
+
 
 **快乐玩耍，文明使用！** 🎉
 
