@@ -32,6 +32,14 @@
         </header>
 
         <div class="controls">
+            <select id="modeSwitch">
+                <option value="browse">浏览模式</option>
+                <option value="dj">打碟模式</option>
+            </select>
+            <select id="keySystemSwitch" style="display: none;">
+                <option value="main">主键盘 (QWE/ASD/ZXC)</option>
+                <option value="numpad">小键盘 (789/456/123)</option>
+            </select>
             <button id="randomPlay">随机播放</button>
             <button id="stopAll">停止所有</button>
             <label>
@@ -42,6 +50,35 @@
         <main id="voiceContainer">
             <!-- 音频按钮会通过JS动态生成 -->
         </main>
+
+        <div id="djContainer" style="display: none;">
+            <h2>九宫格打碟板</h2>
+            <p class="instructions">使用主键盘 (QWE/ASD/ZXC) 或者 小键盘 (789/456/123) 触发，支持音轨重叠！</p>
+            <div class="dj-pad-grid" id="djPadGrid">
+                <!-- 九宫格将由JS动态生成 -->
+            </div>
+        </div>
+
+        <div id="voiceSelectorModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>为格子 <span id="targetPadIndex">0</span> 选择音效</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="voice-search">
+                        <input type="text" id="voiceSearch" placeholder="搜索音效..." />
+                    </div>
+                    <div class="voice-list" id="voiceList">
+                        <!-- 音效列表会动态生成 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmSelection">确认选择</button>
+                    <button id="cancelSelection">取消</button>
+                </div>
+            </div>
+        </div>
 
         <footer class="app-footer">
             <div class="footer-content">
