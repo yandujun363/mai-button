@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="shortcut icon" href="favicon.jpg" type="image/jpeg">
 </head>
+
 <body>
     <!-- 加载界面 -->
     <div id="loadingScreen" class="loading-screen">
@@ -78,6 +80,43 @@
 
     <!-- 修改为模块化加载 -->
     <script type="module" src="app.js"></script>
-    <script defer src="https://js.yangdujun.top/version.js" data-website-id="02d69265-97af-44ea-9e73-9607ee9076bc"></script>
+    <script type="module">
+        import AnalyticsConsent from "https://cdn.yangdujun.top/js/ac.js";
+        let customEventTriggered = false
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const analytics = new AnalyticsConsent({
+                umamiUrl: "https://js.yangdujun.top/version.js",
+                websiteId: "02d69265-97af-44ea-9e73-9607ee9076bc",
+                theme: "auto",
+                onConsentChange: function (consent, isEUUser, source) {
+                    if (consent && !customEventTriggered) {
+                        customEventTriggered = true;
+                        sendConsentEvent(source, isEUUser);
+                    }
+                },
+            });
+            function sendConsentEvent(source, isEUUser) {
+
+                // 使用事件名称 + 事件数据的方式
+                const eventData = {
+                    referrer: document.referrer || "direct",
+                    usergent: navigator.userAgent || "Unknown"
+                };
+
+                // 等待 umami 可用
+                const waitForUmami = setInterval(() => {
+                    if (window.umami) {
+                        clearInterval(waitForUmami);
+                        umami.track("consent_approved", eventData);
+                    }
+                }, 100);
+
+                // 10秒超时
+                setTimeout(() => clearInterval(waitForUmami), 10000);
+            }
+        });
+    </script>
 </body>
+
 </html>
