@@ -471,3 +471,308 @@ header h1 {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+/* ===== 打碟模式样式 ===== */
+#djContainer {
+    background-color: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin: var(--spacing-lg) 0;
+    box-shadow: var(--shadow);
+}
+
+.dj-pad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 15px;
+    aspect-ratio: 1 / 1;
+    max-width: 600px;
+    margin: var(--spacing-lg) auto;
+}
+
+.dj-pad {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    border: 3px solid var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dj-pad:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.dj-pad.active {
+    background-color: var(--primary-color);
+    color: white;
+    transform: scale(0.95);
+    box-shadow: 0 0 20px var(--primary-color);
+}
+
+.dj-pad .pad-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 5px;
+    word-break: break-all;
+    max-height: 40%;
+    overflow: hidden;
+}
+
+.dj-pad .key-hint {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-dark);
+    margin-top: 5px;
+}
+
+.dj-pad .process-mask {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background-color: var(--primary-light);
+    transition: height linear;
+    pointer-events: none;
+}
+
+/* ===== 模态框样式 ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-light);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-modal:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--primary-color);
+}
+
+.modal-body {
+    padding: var(--spacing-md);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.voice-search {
+    margin-bottom: var(--spacing-md);
+}
+
+#voiceSearch {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--button-radius);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast);
+}
+
+#voiceSearch:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.voice-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    padding: 5px;
+}
+
+.voice-list-item {
+    padding: 12px 15px;
+    background-color: #f8f8f8;
+    border: 1px solid var(--border-color);
+    border-radius: var(--button-radius);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+}
+
+.voice-list-item:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.voice-list-item.selected {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-dark);
+}
+
+.voice-list-item .voice-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.voice-list-item .voice-tag {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+.modal-footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+}
+
+.modal-footer button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--button-radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+#confirmSelection {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#confirmSelection:hover {
+    background-color: var(--primary-dark);
+}
+
+#cancelSelection {
+    background-color: #f0f0f0;
+    color: var(--text-primary);
+}
+
+#cancelSelection:hover {
+    background-color: #e0e0e0;
+}
+
+/* 模态框动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content {
+    animation: slideIn 0.3s ease;
+}
+
+
+/* ===== 更新：九宫格样式，支持两套按键提示 ===== */
+.dj-pad .key-hints {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 5px;
+    font-size: 1.2rem;
+}
+
+.dj-pad .main-key-hint,
+.dj-pad .numpad-key-hint {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.dj-pad .main-key-hint {
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.dj-pad .numpad-key-hint {
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.dj-pad .separator {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* 不同按键系统的高亮效果 */
+.dj-pad.main-active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color);
+}
+
+.dj-pad.numpad-active {
+    border-color: #e74c3c;
+    box-shadow: 0 0 15px #e74c3c;
+}
