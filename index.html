@@ -90,6 +90,31 @@
 
     <!-- 修改为模块化加载 -->
     <script type="module" src="app.js"></script>
+    <!--
+    Umami统计代码，如果要Fork部署，记得删除或者修改一下自己实现统计，如果你的统计也是Umaim，那么可以复用ac.js，
+    constructor(options = {}) {
+        this.options = {
+          umamiUrl: options.umamiUrl || "/script.js",
+          websiteId: options.websiteId || "",
+          bannerPosition: options.bannerPosition || "bottom", // 'bottom', 'top', 'center'
+          theme: options.theme || "light", // 'light', 'dark', 'auto'
+          language: options.language || this.getBrowserLanguage(),
+          expirationDays: options.expirationDays || 365,
+          privacyPolicyUrl:
+            options.privacyPolicyUrl || "https://privacy.yangdujun.top",
+          trackOutboundLinks: options.trackOutboundLinks !== false, // 新增：默认开启外链跟踪
+          euDetectionApi: options.euDetectionApi || "https://is-eu.yangdujun.top",
+          enableEuDetection: options.enableEuDetection !== false,
+
+          // 新增回调配置
+          onConsentChange: options.onConsentChange || null,
+          onAnalyticsLoad: options.onAnalyticsLoad || null,
+          onAnalyticsRemove: options.onAnalyticsRemove || null,
+          onEuDetectionComplete: options.onEuDetectionComplete || null,
+          ...options,
+    }; 
+    但是复用不要忘记传参数初始化。
+    -->
     <script type="module">
         import AnalyticsConsent from "https://cdn.yangdujun.top/js/ac.js";
         let customEventTriggered = false
