@@ -131,6 +131,118 @@ A: 音频版权归原主播所有，请勿用于商业用途。
 
 
 
-**快乐玩耍，文明使用！** 🎉
+**快乐玩耍，文明使用！**
 
 如有问题，欢迎在GitHub Issues中提出！
+
+
+---
+# 重要部署警告
+
+## 关于统计代码的必读事项
+
+如果你要Fork并部署此项目，**必须修改以下配置**：
+
+### 必须修改的配置（否则数据会跑错地方！）
+
+```javascript
+const analytics = new AnalyticsConsent({
+  // 必须修改：这是你的Umami网站ID，从你的Umami后台获取
+  websiteId: "PUT_YOUR_WEBSITE_ID_HERE",
+  
+  // 必须修改：这是你的Umami脚本地址
+  umamiUrl: "你的Umami脚本地址",
+  
+  // 必须修改：你的隐私政策页面
+  privacyPolicyUrl: "你的隐私政策页面",
+  
+  // 必须修改：你的欧盟检测API（如果不需要可以禁用）
+  euDetectionApi: "你的欧盟检测API",
+  
+  // ... 其他配置可以保持默认
+});
+```
+
+### 快速修改方法
+
+在 `index.html` 文件中，找到这段代码：
+
+```javascript
+const analytics = new AnalyticsConsent({
+  umamiUrl: "https://js.yangdujun.top/version.js",      // 改为你的地址
+  websiteId: "02d69265-97af-44ea-9e73-9607ee9076bc",    // 改为你的ID
+  // ... 其他配置
+});
+```
+
+### 如果你不需要统计
+
+可以直接删除整个统计代码块：
+
+```html
+<!-- 删除从 <script type="module"> 到 </script> 的所有内容 -->
+```
+
+### 欧盟GDPR合规说明
+
+如果你不面向欧盟用户，可以禁用欧盟检测，禁用后默认当作欧盟用户处理：
+
+```javascript
+const analytics = new AnalyticsConsent({
+  // ... 其他配置
+  enableEuDetection: false,  // 禁用欧盟检测
+});
+```
+
+### 复用 ac.js 的注意事项
+
+虽然你可以复用 `ac.js` 组件，但**必须传入正确的参数初始化**：
+
+```javascript
+// 错误：直接复用会导致数据发送到原作者服务器
+import AnalyticsConsent from "https://cdn.yangdujun.top/js/ac.js";
+
+// 正确：传入你自己的配置
+const analytics = new AnalyticsConsent({
+  umamiUrl: "你的Umami统计脚本地址",
+  websiteId: "你的网站ID",
+  privacyPolicyUrl: "你的隐私政策链接",
+  // ... 其他参数
+});
+```
+
+### 检查清单
+
+部署前请确认：
+- [ ] 修改了 `websiteId`（从你的Umami后台获取）
+- [ ] 修改了 `umamiUrl`（指向你的Umami实例）
+- [ ] 修改了 `privacyPolicyUrl`（你的隐私政策页面）
+- [ ] 修改了 `euDetectionApi` 或禁用了欧盟检测
+- [ ] 测试了统计功能（确认数据出现在你的后台）
+
+### 后果警告
+
+如果不修改配置：
+1. **你的网站数据会发送到原作者的Umami后台**
+2. **原作者能看到你的网站访问统计**
+3. **你无法在自己的后台看到任何数据**
+4. **可能违反隐私法规（GDPR等）**
+
+### 如何获取配置
+
+1. **部署自己的Umami**：[Umami官方文档](https://umami.is/docs)
+2. **获取websiteId**：在Umami后台创建网站后获得
+3. **配置隐私政策**：创建符合法规的隐私政策页面
+
+---
+
+**记住：修改统计配置是部署的第一步，不是可选项！**
+
+如果忘记修改，你的用户数据会被别人收集，而你对此一无所知。
+
+---
+
+## 相关链接
+
+- [Umami官方文档](https://umami.is/docs)
+- [GDPR合规指南](https://gdpr.eu/)
