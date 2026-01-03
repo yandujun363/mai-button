@@ -1,16 +1,10 @@
 // ES模块版本
 import { zhLocale } from './src/locales/zh.js';
 import { voices } from './src/config/voices.js';
+import { CDN_CONFIGS } from './src/config/cdns.js'; // 新增导入
 
-const CDN_URL = "https://cdn.yangdujun.top/auido/3546775765912341/"
 const CONCURRENCY_MIX = 5
 let AUIDO_URL = ""
-
-if (CDN_URL!="") {
-    AUIDO_URL=CDN_URL
-} else {
-    AUIDO_URL = "public/voices/"
-}
 
 // 全局状态
 const state = {
@@ -25,13 +19,18 @@ const state = {
         ja: zhLocale  // 暂时使用中文，可后续添加日文
     },
     totalToLoad: 0,
-    loadedCount: 0
+    loadedCount: 0,
+    selectedCdn: null, // 新增：选中的CDN
+    availableCdns: CDN_CONFIGS || [], // 新增：可用的CDN列表
+    isSingleCdnMode: CDN_CONFIGS && CDN_CONFIGS.length === 1, // 判断是否单CDN模式
+    isLocalMode: !CDN_CONFIGS || CDN_CONFIGS.length === 0 // 判断是否本地模式
 };
 
 // IndexedDB数据库配置
 const DB_NAME = 'MaiButtonDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // 更新版本号以支持CDN存储
 const STORE_NAME = 'audioCache';
+const CDN_STORE_NAME = 'cdnSettings'; // 新增：CDN设置存储
 
 // 初始化IndexedDB
 async function initDB() {
@@ -43,11 +42,164 @@ async function initDB() {
         
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
+            
+            // 创建音频缓存存储
             if (!db.objectStoreNames.contains(STORE_NAME)) {
                 db.createObjectStore(STORE_NAME, { keyPath: 'path' });
             }
+            
+            // 仅在非本地模式下创建CDN设置存储
+            if (!state.isLocalMode && !db.objectStoreNames.contains(CDN_STORE_NAME)) {
+                const cdnStore = db.createObjectStore(CDN_STORE_NAME, { keyPath: 'id' });
+                cdnStore.createIndex('selected', 'selected', { unique: false });
+            }
         };
     });
+}
+
+// 保存选中的CDN到IndexedDB
+async function saveSelectedCdn(cdnId) {
+    // 本地模式不需要保存CDN设置
+    if (state.isLocalMode) return Promise.resolve(null);
+    
+    try {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([CDN_STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(CDN_STORE_NAME);
+            
+            // 先获取所有记录
+            const getAllRequest = store.getAll();
+            
+            getAllRequest.onsuccess = () => {
+                const records = getAllRequest.result;
+                
+                // 清除所有选中状态
+                const updatePromises = records.map(record => {
+                    if (record.selected) {
+                        record.selected = false;
+                        return store.put(record);
+                    }
+                    return null;
+                }).filter(p => p !== null);
+                
+                // 等待所有更新完成
+                Promise.all(updatePromises.map(p => 
+                    new Promise((res, rej) => {
+                        p.onsuccess = res;
+                        p.onerror = rej;
+                    })
+                )).then(() => {
+                    // 保存新的选中状态
+                    const cdn = state.availableCdns.find(c => c.id === cdnId);
+                    if (cdn) {
+                        const cdnData = {
+                            id: cdn.id,
+                            url: cdn.url,
+                            name: cdn.name,
+                            selected: true,
+                            timestamp: Date.now()
+                        };
+                        const request = store.put(cdnData);
+                        request.onsuccess = () => resolve(cdnData);
+                        request.onerror = () => reject(request.error);
+                    } else {
+                        resolve(null);
+                    }
+                });
+            };
+            
+            getAllRequest.onerror = () => reject(getAllRequest.error);
+        });
+    } catch (error) {
+        console.warn('保存CDN设置失败:', error);
+        return null;
+    }
+}
+
+// 从IndexedDB获取选中的CDN
+async function getSelectedCdn() {
+    // 本地模式不需要获取CDN设置
+    if (state.isLocalMode) return Promise.resolve(null);
+    
+    try {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([CDN_STORE_NAME], 'readonly');
+            const store = transaction.objectStore(CDN_STORE_NAME);
+            
+            // 获取所有记录，然后在内存中筛选
+            const request = store.getAll();
+            
+            request.onsuccess = () => {
+                const selectedCdn = request.result.find(cdn => cdn.selected === true);
+                resolve(selectedCdn || null);
+            };
+            
+            request.onerror = () => reject(request.error);
+        });
+    } catch (error) {
+        console.warn('获取CDN设置失败:', error);
+        return null;
+    }
+}
+
+// 渲染CDN选择界面
+function renderCdnOptions() {
+    const container = document.getElementById('cdnOptions');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    state.availableCdns.forEach(cdn => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'cdn-option';
+        optionElement.dataset.cdnId = cdn.id;
+        
+        optionElement.innerHTML = `
+            <div class="cdn-option-header">
+                <h3>${cdn.name}</h3>
+                <span class="cdn-priority">优先级: ${cdn.priority}</span>
+            </div>
+            <div class="cdn-option-url">${cdn.url}</div>
+            <div class="cdn-option-desc">${cdn.description}</div>
+        `;
+        
+        optionElement.addEventListener('click', () => {
+            selectCdn(cdn.id);
+        });
+        
+        container.appendChild(optionElement);
+    });
+}
+
+// 选择CDN
+async function selectCdn(cdnId) {
+    const cdn = state.availableCdns.find(c => c.id === cdnId);
+    if (!cdn) return;
+    
+    // 更新选中状态
+    state.selectedCdn = cdn;
+    
+    // 检查是否要记住选择
+    const rememberCheckbox = document.getElementById('rememberCdn');
+    const remember = rememberCheckbox ? rememberCheckbox.checked : true;
+    
+    if (remember && !state.isLocalMode) {
+        await saveSelectedCdn(cdnId);
+    }
+    
+    // 设置音频URL
+    AUIDO_URL = cdn.url;
+    
+    // 隐藏CDN选择界面，显示加载界面
+    const cdnSelectScreen = document.getElementById('cdnSelectScreen');
+    if (cdnSelectScreen) {
+        cdnSelectScreen.style.display = 'none';
+    }
+    
+    // 开始加载音频
+    startAudioLoading();
 }
 
 // 从IndexedDB获取音频
@@ -75,7 +227,12 @@ async function saveAudioToCache(path, blob) {
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([STORE_NAME], 'readwrite');
             const store = transaction.objectStore(STORE_NAME);
-            const request = store.put({ path, blob, timestamp: Date.now() });
+            const request = store.put({ 
+                path, 
+                blob, 
+                timestamp: Date.now(),
+                cdnUrl: state.selectedCdn ? state.selectedCdn.url : AUIDO_URL // 记录CDN信息
+            });
             
             request.onsuccess = () => resolve();
             request.onerror = () => reject(request.error);
@@ -95,8 +252,12 @@ async function cleanupOldCache() {
         
         request.onsuccess = () => {
             const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+            const currentCdnUrl = AUIDO_URL;
+            
             request.result.forEach(item => {
-                if (item.timestamp < thirtyDaysAgo) {
+                // 清理超过30天的缓存，以及不属于当前CDN的缓存
+                if (item.timestamp < thirtyDaysAgo || 
+                    (item.cdnUrl && item.cdnUrl !== currentCdnUrl)) {
                     store.delete(item.path);
                 }
             });
@@ -157,11 +318,21 @@ async function preloadAudio(voice, updateProgress) {
 function updateProgress() {
     const progress = document.getElementById('loadingProgress');
     const progressText = document.getElementById('loadingProgressText');
+    const loadingCdnInfo = document.getElementById('loadingCdnInfo');
     
     if (progress && progressText) {
         const percentage = Math.round((state.loadedCount / state.totalToLoad) * 100);
         progress.style.width = `${percentage}%`;
         progressText.textContent = `${state.loadedCount}/${state.totalToLoad}`;
+    }
+    
+    // 更新CDN信息显示
+    if (loadingCdnInfo) {
+        if (state.isLocalMode) {
+            loadingCdnInfo.textContent = '音频源: 本地文件 (public/voices/)';
+        } else if (state.selectedCdn) {
+            loadingCdnInfo.textContent = `音频源: ${state.selectedCdn.name}`;
+        }
     }
 }
 
@@ -193,6 +364,49 @@ async function batchPreload(voices) {
     // 等待所有批次完成
     for (const batch of batches) {
         await batch;
+    }
+}
+
+// 开始音频加载（从原来的init函数中提取）
+async function startAudioLoading() {
+    try {
+        // 显示加载界面
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+        }
+        
+        // 设置音频数据
+        state.voices = voices;
+        
+        // 清理旧缓存
+        await cleanupOldCache();
+        
+        // 预加载音频
+        await batchPreload(state.voices);
+        
+        // 显示主界面
+        showMainContent();
+        
+        // 渲染音频按钮
+        renderVoiceButtons();
+        
+        // 绑定事件
+        bindEvents();
+        
+        console.log('初始化完成，已加载音频:', state.voices.length);
+        if (state.isLocalMode) {
+            console.log('使用本地文件模式');
+        } else if (state.selectedCdn) {
+            console.log('使用的CDN:', state.selectedCdn.name);
+        }
+    } catch (error) {
+        console.error('初始化失败:', error);
+        // 即使预加载失败，也显示界面
+        showMainContent();
+        state.voices = voices;
+        renderVoiceButtons();
+        bindEvents();
     }
 }
 
@@ -388,18 +602,53 @@ function playRandomVoice() {
     playVoice(state.voices[randomIndex]);
 }
 
+// 显示CDN选择界面
+function showCdnSelect() {
+    const mainContent = document.getElementById('mainContent');
+    const cdnSelectScreen = document.getElementById('cdnSelectScreen');
+    
+    if (mainContent) mainContent.style.display = 'none';
+    if (cdnSelectScreen) cdnSelectScreen.style.display = 'flex';
+    
+    // 停止所有音频
+    stopAllVoices();
+    
+    // 重新渲染CDN选项
+    renderCdnOptions();
+}
+
 // 绑定事件
 function bindEvents() {
     // 随机播放
-    document.getElementById('randomPlay').addEventListener('click', playRandomVoice);
+    const randomPlayBtn = document.getElementById('randomPlay');
+    if (randomPlayBtn) {
+        randomPlayBtn.addEventListener('click', playRandomVoice);
+    }
     
     // 停止所有
-    document.getElementById('stopAll').addEventListener('click', stopAllVoices);
+    const stopAllBtn = document.getElementById('stopAll');
+    if (stopAllBtn) {
+        stopAllBtn.addEventListener('click', stopAllVoices);
+    }
     
     // 循环模式切换
-    document.getElementById('loopMode').addEventListener('change', (e) => {
-        state.isLoopMode = e.target.checked;
-    });
+    const loopModeCheckbox = document.getElementById('loopMode');
+    if (loopModeCheckbox) {
+        loopModeCheckbox.addEventListener('change', (e) => {
+            state.isLoopMode = e.target.checked;
+        });
+    }
+    
+    // CDN切换按钮 - 仅在多个CDN时显示
+    const changeCdnBtn = document.getElementById('changeCdn');
+    if (changeCdnBtn) {
+        if (state.isLocalMode || state.isSingleCdnMode) {
+            // 本地模式或单CDN模式，隐藏切换按钮
+            changeCdnBtn.style.display = 'none';
+        } else {
+            changeCdnBtn.addEventListener('click', showCdnSelect);
+        }
+    }
 }
 
 // 隐藏加载界面，显示主界面
@@ -414,32 +663,52 @@ function showMainContent() {
 // 初始化
 async function init() {
     try {
-        // 设置音频数据
-        state.voices = voices;
-        
-        // 清理旧缓存
-        cleanupOldCache();
-        
-        // 预加载音频
-        await batchPreload(state.voices);
-        
-        // 显示主界面
-        showMainContent();
-        
-        // 渲染音频按钮
-        renderVoiceButtons();
-        
-        // 绑定事件
-        bindEvents();
-        
-        console.log('初始化完成，已加载音频:', state.voices.length);
+        // 判断模式
+        if (state.isLocalMode) {
+            // 本地模式，直接使用本地路径
+            console.log('使用本地文件模式');
+            AUIDO_URL = 'public/voices/';
+            startAudioLoading();
+        } else if (state.isSingleCdnMode) {
+            // 只有一个CDN，直接使用
+            console.log('使用单CDN模式');
+            const cdn = state.availableCdns[0];
+            state.selectedCdn = cdn;
+            AUIDO_URL = cdn.url;
+            startAudioLoading();
+        } else {
+            // 多个CDN，需要选择
+            console.log('使用多CDN选择模式');
+            
+            // 渲染CDN选项
+            renderCdnOptions();
+            
+            // 检查是否有保存的CDN选择
+            const savedCdn = await getSelectedCdn();
+            
+            if (savedCdn) {
+                // 直接使用保存的CDN，跳过选择界面
+                await selectCdn(savedCdn.id);
+            } else {
+                // 显示CDN选择界面
+                const cdnSelectScreen = document.getElementById('cdnSelectScreen');
+                if (cdnSelectScreen) {
+                    cdnSelectScreen.style.display = 'flex';
+                }
+            }
+        }
     } catch (error) {
         console.error('初始化失败:', error);
-        // 即使预加载失败，也显示界面
-        showMainContent();
-        state.voices = voices;
-        renderVoiceButtons();
-        bindEvents();
+        // 失败时尝试回退
+        if (state.availableCdns.length > 0) {
+            // 尝试使用第一个CDN
+            await selectCdn(state.availableCdns[0].id);
+        } else {
+            // 回退到本地模式
+            state.isLocalMode = true;
+            AUIDO_URL = 'public/voices/';
+            startAudioLoading();
+        }
     }
 }
 

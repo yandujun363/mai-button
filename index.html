@@ -10,8 +10,30 @@
 </head>
 
 <body>
+    <!-- CDN选择界面 - 仅在多个CDN时显示 -->
+    <div id="cdnSelectScreen" class="cdn-select-screen" style="display: none;">
+        <div class="cdn-select-content">
+            <div class="cdn-select-header">
+                <h2>选择音频源</h2>
+                <p class="cdn-select-desc">请选择一个音频加载源以开始使用</p>
+            </div>
+            
+            <div class="cdn-options-container" id="cdnOptions">
+                <!-- CDN选项会通过JS动态生成 -->
+            </div>
+            
+            <div class="cdn-select-footer">
+                <p class="cdn-note">选择后会开始加载音频资源，首次加载可能需要时间</p>
+                <div class="cdn-storage-info">
+                    <input type="checkbox" id="rememberCdn" checked>
+                    <label for="rememberCdn">记住我的选择（使用浏览器本地存储）</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 加载界面 -->
-    <div id="loadingScreen" class="loading-screen">
+    <div id="loadingScreen" class="loading-screen" style="display: none;">
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <div class="loading-text">正在加载音频资源...</div>
@@ -22,11 +44,13 @@
                 <div class="progress-text" id="loadingProgressText">0/0</div>
             </div>
             <div class="loading-note">首次加载可能需要时间，音频会缓存在您的浏览器中</div>
+            <div class="loading-cdn-info" id="loadingCdnInfo"></div>
         </div>
     </div>
 
     <!-- 主界面 -->
     <div id="mainContent" class="main-content" style="display: none;">
+        <!-- 原有主界面内容保持不变 -->
         <header>
             <h1>埋按钮 (:3っ)∋</h1>
         </header>
@@ -37,6 +61,7 @@
             <label>
                 <input type="checkbox" id="loopMode"> 洗脑循环
             </label>
+            <button id="changeCdn" class="cdn-change-btn">更换音频源</button>
         </div>
 
         <main id="voiceContainer">
@@ -78,10 +103,6 @@
 
             <div class="footer-bottom">
                 <p class="copyright">© 2025 埋按钮 (:3っ)∋ - 仅供娱乐使用</p>
-                <!-- <a href="http://47.98.42.89:9000/" target="_blank">梨按钮</a><br>
-                <a href="http://47.98.42.89:9001/" target="_blank">虎按钮</a><br>
-                <a href="http://47.98.42.89:9002/" target="_blank">羽毛球按钮</a><br>
-                <a href="http://47.98.42.89:9003/" target="_blank">虾按钮</a><br> -->
                 <a href="https://www.yangdujun.top/" target="_blank">按钮太多了，塞我博客导航栏了</a><br>
                 <a href="https://www.yangdujun.top" target="_blank">能不能来看看我博客</a><br>
                 <a href="https://space.bilibili.com/7813737" target="_blank" rel="noopener noreferrer">感谢春虎Harutora提供的音频文件</a><br>
