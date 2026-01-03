@@ -2,6 +2,16 @@
 import { zhLocale } from './src/locales/zh.js';
 import { voices } from './src/config/voices.js';
 
+const CDN_URL = "https://cdn.yangdujun.top/auido/3546775765912341/"
+const CONCURRENCY_MIX = 5
+let AUIDO_URL = ""
+
+if (CDN_URL!="") {
+    AUIDO_URL=CDN_URL
+} else {
+    AUIDO_URL = "public/voices/"
+}
+
 // 全局状态
 const state = {
     currentLang: 'zh',
@@ -119,7 +129,7 @@ async function preloadAudio(voice, updateProgress) {
     // 从网络加载
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', `public/voices/${path}`, true);
+        xhr.open('GET', `${AUIDO_URL}${path}`, true);
         xhr.responseType = 'blob';
         
         xhr.onload = async () => {
@@ -164,7 +174,7 @@ async function batchPreload(voices) {
     updateProgress();
     
     // 并行加载，但控制并发数
-    const CONCURRENCY = 5;
+    const CONCURRENCY = CONCURRENCY_MIX;
     const batches = [];
     
     for (let i = 0; i < voices.length; i += CONCURRENCY) {
@@ -286,7 +296,7 @@ async function playVoice(voice) {
             state.audioCache.set(path, blob);
         } else {
             // 回退到直接加载
-            const audio = new Audio(`public/voices/${path}`);
+            const audio = new Audio(`${AUIDO_URL}${path}`);
             playAudioElement(audio, voice);
             return;
         }
