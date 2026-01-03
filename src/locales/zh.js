@@ -1,3 +1,4 @@
+//locales/zh.js
 export const zhLocale = {
     tags: {
         sounds: "不明生物",

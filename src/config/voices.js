@@ -1,8 +1,9 @@
+//config/voices.js
 export const voices = [
     {
         messages: { zh: "he~~~tui" },
         path: "he~~~tui.mp3",
-        tag: "sounds"
+        tag: "actions"  // 从 sounds 移到 actions（吐口水的动作）
     },
     {
         messages: { zh: "伸懒腰" },
@@ -67,12 +68,12 @@ export const voices = [
     {
         messages: { zh: "吐水" },
         path: "吐水.mp3",
-        tag: "sounds"
+        tag: "actions"  // 从 sounds 移到 actions（吐水的动作）
     },
     {
         messages: { zh: "吐泡泡" },
         path: "吐泡泡.mp3",
-        tag: "sounds"
+        tag: "actions"  // 从 sounds 移到 actions（吐泡泡的动作）
     },
     {
         messages: { zh: "哒哒哒" },
@@ -187,22 +188,22 @@ export const voices = [
     {
         messages: { zh: "嗯~01" },
         path: "嗯~01.mp3",
-        tag: "reactions"
+        tag: "murmur"  // 从 reactions 移到 murmur（更符合哼哼唧唧的感觉）
     },
     {
         messages: { zh: "嗯~02" },
         path: "嗯~02.mp3",
-        tag: "reactions"
+        tag: "murmur"  // 从 reactions 移到 murmur
     },
     {
         messages: { zh: "嗯~03" },
         path: "嗯~03.mp3",
-        tag: "reactions"
+        tag: "murmur"  // 从 reactions 移到 murmur
     },
     {
         messages: { zh: "嗯~04" },
         path: "嗯~04.mp3",
-        tag: "reactions"
+        tag: "murmur"  // 从 reactions 移到 murmur
     },
     {
         messages: { zh: "嘛嘛嘛" },
@@ -407,7 +408,7 @@ export const voices = [
     {
         messages: { zh: "死鬼01" },
         path: "死鬼01.mp3",
-        tag: "reactions"
+        tag: "calling"  // 从 reactions 移到 calling（符合"祖宗召唤术"的调戏感）
     },
     {
         messages: { zh: "死鬼，不许去DD" },
@@ -467,7 +468,7 @@ export const voices = [
     {
         messages: { zh: "生为小坷埋，死为小死鬼" },
         path: "生为小坷埋，死为小死鬼.mp3",
-        tag: "reactions"
+        tag: "self_intro"  // 从 reactions 移到 self_intro（更符合自我介绍的调性）
     },
     {
         messages: { zh: "老登！爆米！" },
