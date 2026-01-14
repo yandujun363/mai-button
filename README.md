@@ -3,7 +3,7 @@
 基于[CaoMeiYouRen/shirakami-haruka-button](https://github.com/CaoMeiYouRen/shirakami-haruka-button)修改[^1]  
 
 **在线体验**：[埋按钮 (:3っ)∋](https://maibutton.yangdujun.top)  
-**GitHub Pages**：[https://yandujun363.github.io/mai-button/](https://yandujun363.github.io/mai-button/)
+**GitHub Pages**：[https://yandujun363.github.io/mai-button/](https://yandujun363.github.io/mai-button/)  
 **模板仓库**:[yandujun363/audio-button-template](https://github.com/yandujun363/audio-button-template)
 
 感谢[春虎Harutora](https://space.bilibili.com/7813737)提供的主播音频文件  
