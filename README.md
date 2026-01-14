@@ -4,6 +4,7 @@
 
 **在线体验**：[埋按钮 (:3っ)∋](https://maibutton.yangdujun.top)  
 **GitHub Pages**：[https://yandujun363.github.io/mai-button/](https://yandujun363.github.io/mai-button/)
+**模板仓库**:[yandujun363/audio-button-template](https://github.com/yandujun363/audio-button-template)
 
 感谢[春虎Harutora](https://space.bilibili.com/7813737)提供的主播音频文件  
 代码部分使用MIT协议开源
