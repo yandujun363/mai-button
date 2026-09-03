@@ -114,6 +114,33 @@
         </footer>
     </div>
 
+    <strong class="err-mgs"></strong>
+
+    <script>
+        window.onerror = function(msg, url, line) {
+            var errEl = document.querySelector('.err-mgs');
+            if (errEl) {
+                errEl.innerHTML = '错误: ' + msg + '<br>位置: ' + url + ' 第' + line + '行';
+            }
+            console.log('捕获到:', msg);
+            return true;
+        };
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker 注册成功:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.warn('Service Worker 注册失败:', err);
+                    });
+            });
+        }
+    </script>
+
     <!--  importmap 配置  -->
     <script type="importmap">
     {
@@ -131,7 +158,9 @@
     <!-- 修改为模块化加载 -->
     <script type="module">
         import { app } from '@app/index.js';
-        document.addEventListener('DOMContentLoaded', () => app.init());
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init()
+        });
     </script>
 </body>
 
