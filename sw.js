@@ -83,14 +83,61 @@ self.addEventListener('fetch', event => {
 
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        if (response) {
-          console.log('从缓存返回:', event.request.url);
-          return response;
+      .then(cachedResponse => {
+        // 如果有缓存，发起网络请求进行验证（带 If-Modified-Since 或 If-None-Match）
+        if (cachedResponse) {
+          // 获取缓存的响应头信息用于验证
+          const cachedHeaders = cachedResponse.headers;
+          const eTag = cachedHeaders.get('ETag');
+          const lastModified = cachedHeaders.get('Last-Modified');
+          
+          // 构建验证请求头
+          const headers = new Headers();
+          if (eTag) {
+            headers.set('If-None-Match', eTag);
+          }
+          if (lastModified) {
+            headers.set('If-Modified-Since', lastModified);
+          }
+
+          // 发起网络请求进行验证
+          const validationRequest = new Request(event.request.url, {
+            method: 'GET',
+            headers: headers
+          });
+
+          return fetch(validationRequest)
+            .then(networkResponse => {
+              // 如果返回 304（Not Modified），使用缓存
+              if (networkResponse.status === 304) {
+                console.log('304验证通过，使用缓存:', event.request.url);
+                return cachedResponse;
+              }
+
+              // 如果返回 200，说明资源有更新
+              if (networkResponse.status === 200) {
+                console.log('资源已更新，更新缓存:', event.request.url);
+                const responseClone = networkResponse.clone();
+                caches.open(CACHE_NAME).then(cache => {
+                  cache.put(event.request, responseClone);
+                });
+                return networkResponse;
+              }
+
+              // 其他状态码，使用缓存作为降级
+              console.log('网络响应异常，使用缓存:', event.request.url);
+              return cachedResponse;
+            })
+            .catch(error => {
+              // 网络请求失败，使用缓存
+              console.warn('网络请求失败，使用缓存:', event.request.url, error);
+              return cachedResponse;
+            });
         }
-        return fetch(event.request).then(
-          networkResponse => {
-            // 可选：缓存新获取的资源
+
+        // 没有缓存，直接请求网络
+        return fetch(event.request)
+          .then(networkResponse => {
             if (networkResponse && networkResponse.status === 200) {
               const responseClone = networkResponse.clone();
               caches.open(CACHE_NAME).then(cache => {
@@ -98,14 +145,14 @@ self.addEventListener('fetch', event => {
               });
             }
             return networkResponse;
-          }
-        ).catch(error => {
-          console.warn('请求失败:', event.request.url, error);
-          return new Response('网络连接已断开，请检查网络后重试。', {
-            status: 503,
-            statusText: 'Service Unavailable'
+          })
+          .catch(error => {
+            console.warn('请求失败:', event.request.url, error);
+            return new Response('网络连接已断开，请检查网络后重试。', {
+              status: 503,
+              statusText: 'Service Unavailable'
+            });
           });
-        });
       })
   );
 });
