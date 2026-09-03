@@ -114,8 +114,21 @@
         </footer>
     </div>
 
+    <!-- ========== importmap 配置 ========== -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@core/": "./src/core/",
+            "@storage/": "./src/storage/",
+            "@ui/": "./src/ui/",
+            "@config/": "./src/config/",
+            "@locales/": "./src/locales/"
+        }
+    }
+    </script>
+
     <!-- 修改为模块化加载 -->
-    <script type="module" src="app.js"></script>
+    <script type="module" src="src/main.js"></script>
 </body>
 
 </html>
