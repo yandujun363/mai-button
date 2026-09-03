@@ -46,6 +46,3 @@ export const app = {
         }
     }
 };
-
-// 启动应用
-// document.addEventListener('DOMContentLoaded', () => app.init());
