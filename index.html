@@ -129,7 +129,10 @@
     </script>
 
     <!-- 修改为模块化加载 -->
-    <script type="module" src="./src/main.js"></script>
+    <script type="module">
+        import { app } from '@app/index.js';
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
 </body>
 
 </html>
