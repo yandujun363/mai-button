@@ -123,10 +123,6 @@ self.addEventListener('fetch', event => {
                 });
                 return networkResponse;
               }
-
-              // 其他状态码，使用缓存作为降级
-              console.log('网络响应异常，使用缓存:', event.request.url);
-              return cachedResponse;
             })
             .catch(error => {
               // 网络请求失败，使用缓存
