@@ -5,6 +5,18 @@ import { audioInitializer } from '@app/audioInitializer.js';
 import { renderCdnOptions } from '@ui/cdnRenderer.js';
 
 export const app = {
+    /**
+     * 应用初始化入口
+     * 
+     * @async
+     * @returns {Promise<void>}
+     * 
+     * 流程图：
+     * 1. 判断运行模式
+     * 2. 根据模式执行初始化
+     * 3. 绑定界面事件
+     * 4. 异常时执行降级方案
+     */
     async init() {
         try {
             if (state.isLocalMode) {
@@ -35,7 +47,7 @@ export const app = {
             eventBinder.bindAll();
         } catch (error) {
             console.error('初始化失败:', error);
-            // 降级方案
+            // 降级方案：尝试使用第一个CDN或本地模式
             if (state.availableCdns.length > 0) {
                 await cdnManager.select(state.availableCdns[0].id);
             } else {

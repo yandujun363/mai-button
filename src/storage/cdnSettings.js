@@ -1,8 +1,26 @@
 import { initDB } from '@storage/db.js';
+import { state } from '@core/state.js';
 
-const CDN_STORE_NAME = 'cdnSettings';
+const CDN_STORE_NAME = state.DBConfig.CDN_STORE_NAME;
 
-// 保存选中的CDN到IndexedDB
+/**
+ * 保存选中的 CDN 到 IndexedDB
+ * 
+ * @async
+ * @param {string} cdnId - 选中的 CDN ID
+ * @param {Array<Object>} availableCdns - 所有可用的 CDN 配置
+ * @returns {Promise<Object|null>} 保存的 CDN 数据或 null
+ * 
+ * 操作流程：
+ * 1. 将所有现有记录的 selected 设为 false
+ * 2. 创建新的记录，selected 设为 true
+ * 3. 保存到 IndexedDB
+ * 
+ * 注意事项：
+ * - 使用事务确保数据一致性
+ * - 如果 CDN 不存在，返回 null
+ * - 保存失败时返回 null 并记录警告
+ */
 export async function saveSelectedCdn(cdnId, availableCdns) {
     try {
         const db = await initDB();
@@ -55,7 +73,22 @@ export async function saveSelectedCdn(cdnId, availableCdns) {
     }
 }
 
-// 从IndexedDB获取选中的CDN
+/**
+ * 从 IndexedDB 获取选中的 CDN
+ * 
+ * @async
+ * @returns {Promise<Object|null>} 选中的 CDN 数据或 null
+ * 
+ * 查找逻辑：
+ * 1. 获取所有 CDN 设置记录
+ * 2. 查找 selected === true 的记录
+ * 3. 返回第一个匹配的记录
+ * 
+ * 注意事项：
+ * - 理想情况下只有一个记录为 selected: true
+ * - 如果多个记录为 true，只返回第一个
+ * - 如果没有记录，返回 null
+ */
 export async function getSelectedCdn() {
     try {
         const db = await initDB();

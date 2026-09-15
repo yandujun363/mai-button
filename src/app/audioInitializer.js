@@ -6,7 +6,17 @@ import { cleanupOldCache } from '@storage/audioCache.js';
 import { voices } from '@config/voices.js';
 
 export const audioInitializer = {
-    // 开始音频加载
+    /**
+     * 启动音频加载流程
+     * 
+     * @async
+     * @returns {Promise<void>}
+     * 
+     * 错误处理：
+     * - 加载失败时仍会显示主界面
+     * - 使用 voices 作为降级配置
+     * - 错误信息记录到控制台
+     */
     async start() {
         try {
             const loadingScreen = document.getElementById('loadingScreen');
@@ -38,7 +48,11 @@ export const audioInitializer = {
         }
     },
     
-    // 显示主界面
+    /**
+     * 切换显示主界面
+     * 
+     * 隐藏加载界面，显示主内容区域
+     */
     showMainContent() {
         const loadingScreen = document.getElementById('loadingScreen');
         const mainContent = document.getElementById('mainContent');

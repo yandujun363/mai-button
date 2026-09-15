@@ -3,6 +3,11 @@ import { playRandomVoice, stopAllVoices } from '@core/audioPlayer.js';
 import { cdnManager } from '@app/cdnManager.js';
 
 export const eventBinder = {
+    /**
+     * 绑定所有事件
+     * 
+     * 在主界面初始化后调用
+     */
     bindAll() {
         this.bindRandomPlay();
         this.bindStopAll();
@@ -10,6 +15,11 @@ export const eventBinder = {
         this.bindChangeCdn();
     },
     
+    /**
+     * 绑定随机播放事件
+     * 
+     * 从所有音频中随机选择一个播放
+     */
     bindRandomPlay() {
         const btn = document.getElementById('randomPlay');
         if (btn) {
@@ -17,6 +27,11 @@ export const eventBinder = {
         }
     },
     
+    /**
+     * 绑定停止所有事件
+     * 
+     * 停止所有正在播放的音频并清理资源
+     */
     bindStopAll() {
         const btn = document.getElementById('stopAll');
         if (btn) {
@@ -24,6 +39,11 @@ export const eventBinder = {
         }
     },
     
+    /**
+     * 绑定循环模式切换事件
+     * 
+     * 音频播放完成后自动重新播放
+     */
     bindLoopMode() {
         const checkbox = document.getElementById('loopMode');
         if (checkbox) {
@@ -33,6 +53,11 @@ export const eventBinder = {
         }
     },
     
+    /**
+     * 绑定切换CDN事件
+     * 
+     * 在本地模式或单CDN模式下自动隐藏按钮
+     */
     bindChangeCdn() {
         const btn = document.getElementById('changeCdn');
         if (!btn) return;
