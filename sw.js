@@ -77,7 +77,6 @@ self.addEventListener('fetch', event => {
 
   if (!shouldIntercept) {
     // 不拦截的请求直接放行
-    event.respondWith(fetch(event.request));
     return;
   }
 
