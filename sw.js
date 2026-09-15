@@ -122,6 +122,9 @@ self.addEventListener('fetch', event => {
                 });
                 return networkResponse;
               }
+
+              // 其它情况直接返回
+              return networkResponse;
             })
             .catch(error => {
               // 网络请求失败，使用缓存
